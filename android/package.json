@@ -1,7 +1,7 @@
 {
   "name": "crush-of-roses-android",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.2.0",
+  "description": "Crush of Roses — Android wrapper (Capacitor thin shell) by Sloth Gaming Laboratory",
   "main": "index.js",
   "scripts": {
     "sync:dev": "CRUSH_SITE=dev npx cap sync android",
@@ -10,10 +10,12 @@
     "sync:ios-live": "CRUSH_SITE=live npx cap sync ios",
     "build:dev": "npm run sync:dev && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses-dev.apk",
     "build:live": "npm run sync:live && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses.apk",
+    "build:release-dev": "npm run sync:dev && cd android && ./gradlew bundleRelease assembleRelease && cp app/build/outputs/bundle/release/app-release.aab ../crush-of-roses-dev.aab && cp app/build/outputs/apk/release/app-release.apk ../crush-of-roses-dev-release.apk",
+    "build:release-live": "npm run sync:live && cd android && ./gradlew bundleRelease assembleRelease && cp app/build/outputs/bundle/release/app-release.aab ../crush-of-roses.aab && cp app/build/outputs/apk/release/app-release.apk ../crush-of-roses-release.apk",
     "open": "npx cap open android"
   },
   "keywords": [],
-  "author": "",
+  "author": "Sloth Gaming Laboratory",
   "license": "ISC",
   "dependencies": {
     "@capacitor/android": "^8.6.2",
