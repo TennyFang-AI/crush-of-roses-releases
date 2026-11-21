@@ -7,8 +7,8 @@ android {
         applicationId "com.slothgamelab.crushofroses"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +16,38 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Batch 21: Play release signing. The keystore + passwords come from
+    // Gradle properties (NOT from this file): releaseStoreFile,
+    // releaseStorePassword, releaseKeyAlias, releaseKeyPassword — set in
+    // ~/.gradle/gradle.properties for local builds, or passed as
+    // -P... flags / GitHub secrets in CI. If any are missing, the
+    // release build stays unsigned (debug builds are unaffected).
+    signingConfigs {
+        release {
+            if (project.hasProperty('releaseStoreFile')
+                    && project.hasProperty('releaseStorePassword')
+                    && project.hasProperty('releaseKeyAlias')
+                    && project.hasProperty('releaseKeyPassword')) {
+                storeFile file(project.property('releaseStoreFile').toString())
+                storePassword project.property('releaseStorePassword').toString()
+                keyAlias project.property('releaseKeyAlias').toString()
+                keyPassword project.property('releaseKeyPassword').toString()
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Only sign when the keystore properties are present; without
+            // them `assembleRelease`/`bundleRelease` produce an unsigned
+            // artifact instead of failing the build.
+            if (project.hasProperty('releaseStoreFile')
+                    && project.hasProperty('releaseStorePassword')
+                    && project.hasProperty('releaseKeyAlias')
+                    && project.hasProperty('releaseKeyPassword')) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }

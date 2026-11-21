@@ -1,0 +1,73 @@
+<!doctype html>
+<!-- Crush of Roses — splash screen (Batch 21).
+     Shown by main.js while the main window boots and the site loads.
+     Self-contained: only the rose logo from assets/ is referenced. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Crush of Roses</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        background: #140a12;
+        overflow: hidden;
+        font-family: Georgia, "Times New Roman", serif;
+        color: #f3e6ee;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+      }
+      .rose {
+        width: 160px;
+        height: 160px;
+        animation: breathe 2.4s ease-in-out infinite;
+      }
+      @keyframes breathe {
+        0%,
+        100% {
+          opacity: 0.85;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.04);
+        }
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: normal;
+        letter-spacing: 2px;
+        text-align: center;
+      }
+      p {
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: #b99bb0;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      class="rose"
+      src="assets/crystal-rose-512-transparent.png"
+      alt="Crystal rose"
+      draggable="false"
+    />
+    <h1>Crush of Roses</h1>
+    <p>Loading&hellip;</p>
+  </body>
+</html>

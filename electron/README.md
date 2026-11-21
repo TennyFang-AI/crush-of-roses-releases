@@ -17,6 +17,49 @@ The flavor is baked in at build time: `npm run build:dev` /
 packaged app reads it at startup. A `CRUSH_FLAVOR=dev|live` env var
 overrides it at runtime (dev testing only, e.g. `CRUSH_FLAVOR=live npm start`).
 
+## Batch 21 (21 Nov 2026) — version 0.2.0
+
+- **Company rename (wrapper metadata only):** `package.json` author is now
+  "Sloth Gaming Laboratory" (was "Sloth Game Laboratory"). That is what
+  electron-builder puts in the installer's CompanyName / Programs &
+  Features publisher. The in-game studio branding and logo art still say
+  "Sloth Game Laboratory" — deliberately untouched. App id
+  `com.slothgamelab.crushofroses` never changes.
+- **Version 0.2.0** (was 0.1.0; number was the builder's suggestion — the
+  owner can pick another). `package.json` + `package-lock.json`.
+- **Splash window:** `main.js` opens a small frameless splash window
+  (`splash.html`, rose logo from `assets/crystal-rose-512-transparent.png`
+  — the existing game asset, copied, no new art) while the main window
+  boots. The main window is created hidden (`show: false`) and shown on
+  `ready-to-show`, which closes the splash. If the site fails to load
+  (`did-fail-load`) or nothing fires within 30 s, the main window is
+  shown anyway so the user is never trapped on the splash.
+- **Crash recovery:** `render-process-gone` on the main window reloads the
+  page for `crashed` / `killed` / `oom` (this subsumes the legacy
+  `crashed` event). Guard: at most 3 auto-reloads in 60 s, then it stops
+  so a crash loop can't spin forever.
+- **Installer "app is running" check:** the stock electron-builder 26.18.0
+  template DOES call `CHECK_APP_RUNNING` in the oneClick install section,
+  so oneClick itself is not missing the check. The remaining hole is
+  detection: the stock probe leans on PowerShell (`$INSTDIR` path-prefix
+  match) with a tasklist fallback filtered by username, either of which
+  can miss a running instance (PowerShell blocked, app running elevated).
+  Fix: `build/installer.nsh` defines `customCheckAppRunning` (picked up
+  via `nsis.include: installer.nsh` in both builder configs) — an
+  `nsProcess` exact-exe-name probe first; if the app is running it hands
+  over to the stock prompt / graceful-close / force-kill / retry flow.
+  oneClick stays on. **Verified:** the include compiles clean under the
+  Linux `makensis` in BOTH contexts — the uninstaller script (full
+  `npm run build:dev`, 21 Nov, got past makensis with zero errors) and
+  the installer script (minimal replay `/tmp/min-nsis/minimal.nsi`,
+  compiled to the "writing output" stage). Two gotchas found and fixed
+  while verifying — see the comments in `build/installer.nsh` (nsProcess
+  is a macro, not a plugin export; the stock template skips
+  `getProcessInfo.nsh`/`Var pid` when a custom macro exists). **Still
+  blocked:** the full installer exe — see Build status below.
+- **Still unsigned, still no app icon.** No code-signing (separate step,
+  needs a certificate). No icon configured.
+
 ## Run / build
 
 ```sh
@@ -39,11 +82,23 @@ renderer; the preload exposes nothing else.
 
 ## Build status (21 Nov 2026, this VM)
 
-- **NSIS installer: NOT produced.** `npm run build:dev` packages fine but
-  fails at the NSIS step: `wine process failed ENOENT` — electron-builder
-  runs the bundled 32-bit `makensis.exe` under Wine, and Wine is not
-  installed. The failed run leaves a 162 KB NSIS **stub** at
+- **NSIS installer: NOT produced.** `npm run build:dev` packages fine and
+  the NSIS scripts compile fine under the Linux `makensis` bundled with
+  electron-builder 26.18.0 (no Wine needed for compiling — the old
+  "Wine is not installed" framing below is outdated for the compile
+  step). What still needs Wine: after compiling, electron-builder RUNS
+  the built stub installer under Wine to extract the real uninstaller
+  exe, and `wine` is not installed on this VM (`spawn wine ENOENT`) —
+  the failed run leaves a 164 KB NSIS **stub** at
   `dist/crush-of-roses-dev-setup.exe` (no payload) — do not ship it.
+  **Workaround attempted, blocked by this VM:** a fake `wine` that
+  extracts the uninstaller offline with electron-builder's own
+  `UninstallerReader` (`/tmp/fakewine/`, NOT part of the repo) fails
+  because this VM intermittently EPERMs writes of Windows-executable
+  bytes from user-space tools (node/python/cp all hit it; it comes and
+  goes — small/text writes always work, PE-content writes often don't).
+  On a machine with working Wine (or Windows/macOS) the build should
+  complete with no code change.
 - **Wine unblock attempted, failed on this VM.** `apt` cannot install Wine:
   `apt-get update` fails with unsigned-repository GPG errors on the
   `mirror.cogentco.com` mirror (and is extremely slow on the Azure mirror).

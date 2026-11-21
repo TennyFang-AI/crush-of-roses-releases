@@ -6,6 +6,8 @@ directories:
 files:
   - main.js
   - preload.js
+  - splash.html
+  - assets/crystal-rose-512-transparent.png
   - flavor.json
   - package.json
 win:
@@ -13,6 +15,10 @@ win:
   artifactName: crush-of-roses-dev-setup.exe
 nsis:
   oneClick: true
+  # Custom "app is running" check (Batch 21): build/installer.nsh defines
+  # customCheckAppRunning — an nsProcess exact-name probe in front of the
+  # stock prompt/kill/retry flow. See that file for the rationale.
+  include: installer.nsh
   perMachine: false
   createDesktopShortcut: true
   createStartMenuShortcut: true
