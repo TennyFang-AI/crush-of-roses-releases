@@ -22,6 +22,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- OAuth return: Supabase Google sign-in redirects to this
+                 custom scheme after completing in the system browser, so
+                 the app (not Chrome) receives the callback. The site-side
+                 flow (Batch 18) opens the OAuth URL in a Custom Tab and
+                 completes the session from the appUrlOpen event. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.slothgamelab.crushofroses" android:host="auth-callback" />
+            </intent-filter>
+
         </activity>
 
         <provider
