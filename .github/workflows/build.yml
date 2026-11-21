@@ -1,0 +1,149 @@
+# Crush of Roses — wrapper builds.
+# Push to main (or manual dispatch) builds the four wrapper artifacts
+# (dev + live APK, dev + live Windows installer) and publishes them to
+# the `latest` release in this repo, which is what the in-game install
+# modal links to. No signing yet: debug APK, unsigned .exe.
+name: Build wrappers
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-wrappers
+  cancel-in-progress: true
+
+jobs:
+  build-apk-dev:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.14.3
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+      - name: Restore Android binary assets
+        working-directory: .
+        run: base64 -d android-assets.tar.gz.b64 | tar -xz -C android/
+      - run: npm ci
+      - run: npm run sync:dev
+      - name: Build debug APK
+        run: |
+          cd android
+          gradle assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses-dev.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crush-of-roses-dev.apk
+          path: android/crush-of-roses-dev.apk
+          if-no-files-found: error
+
+  build-apk-live:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.14.3
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+      - name: Restore Android binary assets
+        working-directory: .
+        run: base64 -d android-assets.tar.gz.b64 | tar -xz -C android/
+      - run: npm ci
+      - run: npm run sync:live
+      - name: Build debug APK
+        run: |
+          cd android
+          gradle assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crush-of-roses.apk
+          path: android/crush-of-roses.apk
+          if-no-files-found: error
+
+  build-exe-dev:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: electron
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build:dev
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crush-of-roses-dev-setup.exe
+          path: electron/dist/crush-of-roses-dev-setup.exe
+          if-no-files-found: error
+
+  build-exe-live:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: electron
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build:live
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crush-of-roses-setup.exe
+          path: electron/dist/crush-of-roses-setup.exe
+          if-no-files-found: error
+
+  publish:
+    needs: [build-apk-dev, build-apk-live, build-exe-dev, build-exe-live]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: crush-of-roses-*
+          merge-multiple: true
+          path: release-assets
+      - name: Publish latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la release-assets/
+          gh release create latest --title "Latest builds" --notes "Latest wrapper builds (dev + live APK and Windows installer). Rebuilt on every push to main." || true
+          gh release upload latest release-assets/crush-of-roses-dev.apk release-assets/crush-of-roses.apk release-assets/crush-of-roses-dev-setup.exe release-assets/crush-of-roses-setup.exe --clobber
