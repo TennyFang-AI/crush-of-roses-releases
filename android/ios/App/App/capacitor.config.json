@@ -1,0 +1,19 @@
+{
+	"appId": "com.slothgamelab.crushofroses",
+	"appName": "Crush of Roses",
+	"webDir": "www",
+	"server": {
+		"url": "https://crush-of-roses-dev.pages.dev/",
+		"allowNavigation": [
+			"crush-of-roses-dev.pages.dev",
+			"crushofroses.com",
+			"accounts.google.com",
+			"checkout.stripe.com",
+			"billing.stripe.com"
+		]
+	},
+	"android": {
+		"allowMixedContent": false
+	},
+	"packageClassList": []
+}

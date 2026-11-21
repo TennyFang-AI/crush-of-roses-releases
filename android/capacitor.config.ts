@@ -1,15 +1,20 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 /**
- * Crush of Roses — Android wrapper (Capacitor thin shell).
+ * Crush of Roses — wrapper (Capacitor thin shell, Android + iOS).
  *
  * The game is NOT bundled here. The wrapper loads the live site, so game
  * updates deploy to the site and the wrapper picks them up with no rebuild.
  *
  * Dev vs live is chosen by the CRUSH_SITE env var (default: dev):
- *   npm run sync:dev   -> https://crush-of-roses-dev.pages.dev/
- *   npm run sync:live  -> https://crushofroses.com/
+ *   npm run sync:dev       -> https://crush-of-roses-dev.pages.dev/  (android)
+ *   npm run sync:live      -> https://crushofroses.com/              (android)
+ *   npm run sync:ios-dev   -> https://crush-of-roses-dev.pages.dev/  (ios)
+ *   npm run sync:ios-live  -> https://crushofroses.com/              (ios)
  *
+ * The server.url above is shared by both platforms — iOS needs no
+ * separate URL config. iOS is built unsigned (simulator only) until the
+ * Apple Developer Program membership + signing are set up.
  * Capacitor sets window.Capacitor natively in the WebView, which is how the
  * game detects it is wrapped (see batch17-contracts.md §1: isWrappedApp()).
  */

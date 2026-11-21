@@ -6,6 +6,8 @@
   "scripts": {
     "sync:dev": "CRUSH_SITE=dev npx cap sync android",
     "sync:live": "CRUSH_SITE=live npx cap sync android",
+    "sync:ios-dev": "CRUSH_SITE=dev npx cap sync ios",
+    "sync:ios-live": "CRUSH_SITE=live npx cap sync ios",
     "build:dev": "npm run sync:dev && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses-dev.apk",
     "build:live": "npm run sync:live && cd android && ./gradlew assembleDebug && cp app/build/outputs/apk/debug/app-debug.apk ../crush-of-roses.apk",
     "open": "npx cap open android"
@@ -16,7 +18,8 @@
   "dependencies": {
     "@capacitor/android": "^8.6.2",
     "@capacitor/cli": "^8.6.2",
-    "@capacitor/core": "^8.6.2"
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2"
   },
   "devDependencies": {
     "typescript": "^7.0.2"
