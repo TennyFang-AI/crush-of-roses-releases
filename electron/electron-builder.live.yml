@@ -1,0 +1,19 @@
+# Live build — loads https://crushofroses.com/
+appId: com.slothgamelab.crushofroses
+productName: Crush of Roses
+directories:
+  output: dist
+files:
+  - main.js
+  - preload.js
+  - flavor.json
+  - package.json
+win:
+  target: nsis
+  artifactName: crush-of-roses-setup.exe
+nsis:
+  oneClick: true
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Crush of Roses

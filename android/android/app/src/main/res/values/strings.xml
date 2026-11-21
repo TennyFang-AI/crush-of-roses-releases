@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Crush of Roses</string>
+    <string name="title_activity_main">Crush of Roses</string>
+    <string name="package_name">com.slothgamelab.crushofroses</string>
+    <string name="custom_url_scheme">com.slothgamelab.crushofroses</string>
+</resources>
