@@ -48,6 +48,19 @@
     </application>
 
     <!-- Permissions -->
+    <!-- Mic + camera for the WebView (voice recorder + take-photo):
+         Capacitor 8's BridgeWebChromeClient answers the WebView's
+         AUDIO_CAPTURE request by asking Android for BOTH RECORD_AUDIO
+         and MODIFY_AUDIO_SETTINGS, and grants getUserMedia only if
+         every one comes back true — an undeclared permission is refused
+         without a prompt, so the mic stays dead even after the user
+         taps Allow unless MODIFY_AUDIO_SETTINGS is declared too
+         (normal permission, no runtime prompt). CAMERA covers
+         VIDEO_CAPTURE and the file-chooser camera capture.
+         Gallery picking needs NO permission (system photo picker). -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 </manifest>
