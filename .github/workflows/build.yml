@@ -54,9 +54,14 @@ jobs:
       - run: npm ci
       - run: npm run sync:dev
       - name: Restore release keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$GITHUB_WORKSPACE/android/android/app/release.keystore"
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo 'No Android keystore secret; APK job will fall back to an unsigned debug build.'
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/android/android/app/release.keystore"
           ls -l "$GITHUB_WORKSPACE/android/android/app/release.keystore"
       - name: Build APK (release if keystore present, else debug)
         env:
@@ -106,9 +111,14 @@ jobs:
       - run: npm ci
       - run: npm run sync:live
       - name: Restore release keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$GITHUB_WORKSPACE/android/android/app/release.keystore"
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo 'No Android keystore secret; APK job will fall back to an unsigned debug build.'
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/android/android/app/release.keystore"
           ls -l "$GITHUB_WORKSPACE/android/android/app/release.keystore"
       - name: Build APK (release if keystore present, else debug)
         env:
