@@ -3,6 +3,10 @@
 # (dev + live APK, dev + live Windows installer) and publishes them to
 # the `latest` release in this repo, which is what the in-game install
 # modal links to. No signing yet: debug APK, unsigned .exe.
+# Two extra jobs (build-ios-dev, build-ios-live) compile-check the iOS
+# wrapper for the simulator with signing disabled — they do NOT publish
+# and do NOT produce an installable .ipa (that needs an Apple Developer
+# Program membership + signing, not set up yet).
 name: Build wrappers
 
 on:
@@ -129,6 +133,42 @@ jobs:
           name: crush-of-roses-setup.exe
           path: electron/dist/crush-of-roses-setup.exe
           if-no-files-found: error
+
+  build-ios-dev:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Restore iOS binary assets
+        working-directory: .
+        run: base64 -d ios-assets.tar.gz.b64 | tar -xz -C android/
+      - run: npm ci
+      - run: npm run sync:ios-dev
+      - name: Build for iOS Simulator (no signing)
+        run: xcodebuild -project ios/App/App.xcodeproj -target App -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+
+  build-ios-live:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Restore iOS binary assets
+        working-directory: .
+        run: base64 -d ios-assets.tar.gz.b64 | tar -xz -C android/
+      - run: npm ci
+      - run: npm run sync:ios-live
+      - name: Build for iOS Simulator (no signing)
+        run: xcodebuild -project ios/App/App.xcodeproj -target App -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 
   publish:
     needs: [build-apk-dev, build-apk-live, build-exe-dev, build-exe-live]
