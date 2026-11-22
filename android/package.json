@@ -1,7 +1,7 @@
 {
   "name": "crush-of-roses-android",
   "version": "0.2.0",
-  "description": "Crush of Roses — Android wrapper (Capacitor thin shell) by Sloth Gaming Laboratory",
+  "description": "Crush of Roses — Android wrapper (Capacitor thin shell) by Sloth Game Laboratory",
   "main": "index.js",
   "scripts": {
     "sync:dev": "CRUSH_SITE=dev npx cap sync android",
@@ -15,7 +15,7 @@
     "open": "npx cap open android"
   },
   "keywords": [],
-  "author": "Sloth Gaming Laboratory",
+  "author": "Sloth Game Laboratory",
   "license": "ISC",
   "dependencies": {
     "@capacitor/android": "^8.6.2",

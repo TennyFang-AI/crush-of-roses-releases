@@ -20,10 +20,11 @@ overrides it at runtime (dev testing only, e.g. `CRUSH_FLAVOR=live npm start`).
 ## Batch 21 (21 Nov 2026) — version 0.2.0
 
 - **Company rename (wrapper metadata only):** `package.json` author is now
-  "Sloth Gaming Laboratory" (was "Sloth Game Laboratory"). That is what
-  electron-builder puts in the installer's CompanyName / Programs &
-  Features publisher. The in-game studio branding and logo art still say
-  "Sloth Game Laboratory" — deliberately untouched. App id
+  "Sloth Game Laboratory" again — Batch 21 had renamed it to "Sloth Gaming
+  Laboratory" (was "Sloth Game Laboratory"); Batch 25, 22 Nov 2026,
+  renames it back, so the studio name is one name everywhere, in-game
+  and wrapper. That is what electron-builder puts in the installer's
+  CompanyName / Programs & Features publisher. App id
   `com.slothgamelab.crushofroses` never changes.
 - **Version 0.2.0** (was 0.1.0; number was the builder's suggestion — the
   owner can pick another). `package.json` + `package-lock.json`.

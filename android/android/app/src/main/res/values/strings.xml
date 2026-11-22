@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Crush of Roses</string>
     <string name="title_activity_main">Crush of Roses</string>
-    <string name="app_description">Crush of Roses — a chat-companion game by Sloth Gaming Laboratory.</string>
+    <string name="app_description">Crush of Roses — a chat-companion game by Sloth Game Laboratory.</string>
     <string name="package_name">com.slothgamelab.crushofroses</string>
     <string name="custom_url_scheme">com.slothgamelab.crushofroses</string>
 </resources>
