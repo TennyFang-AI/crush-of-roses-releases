@@ -57,11 +57,12 @@ uses the system photo picker, which needs no permission.
 
 ## Batch 21 — Android wrapper (21 Nov 2026)
 
-- **Company name:** wrapper metadata now says **Sloth Gaming
+- **Company name:** wrapper metadata now says **Sloth Game
   Laboratory** — `android:description` in the manifest
   (`@string/app_description`) + `package.json` author/description.
-  The in-game studio branding/logo art still says "Sloth Game
-  Laboratory" — untouched, by design.
+  (Batch 21 had renamed it to "Sloth Gaming Laboratory"; Batch 25,
+  22 Nov 2026, renamed it back — one studio name everywhere, in-game
+  and wrapper.)
 - **Crash recovery:** `MainActivity` registers a Capacitor
   `WebViewListener` whose `onRenderProcessGone` reloads the page and
   returns `true` (we handled it). Before this, no listener was

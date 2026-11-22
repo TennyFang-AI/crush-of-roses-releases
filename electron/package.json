@@ -1,5 +1,5 @@
 {
-  "author": "Sloth Gaming Laboratory",
+  "author": "Sloth Game Laboratory",
   "description": "Crush of Roses — Windows desktop wrapper (Electron thin shell). Loads the game site; no game files are bundled.",
   "devDependencies": {
     "electron": "^38.0.0",
